@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">GPA_biers1_Calculator</string>
+    <string name="app_name">GPA Calculator</string>
+    <string name="title">GPA Calculator</string>
+    <string name="courseNumber">Course</string>
+    <string name="addCourse">Add Course</string>
+    <string name="EnterGPA">Enter GPA</string>
+    <string name="calculateGPA">Compute GPA</string>
 </resources>
