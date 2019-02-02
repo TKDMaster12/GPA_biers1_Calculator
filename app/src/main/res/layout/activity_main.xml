@@ -14,7 +14,7 @@
             android:id="@+id/txtTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
+            android:layout_margin="@dimen/spacing"
             android:text="@string/title"
             android:textSize="@dimen/title_size"
             app:layout_constraintEnd_toEndOf="parent"

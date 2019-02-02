@@ -1,9 +1,11 @@
 package com.example.gpa_biers1_calculator;
 
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,11 +72,15 @@ public class MainActivity extends AppCompatActivity {
         EditText editText = view.findViewById(R.id.editFinalGrade);
         //get spinner
         Spinner spinner = view.findViewById(R.id.spinnerCredits);
+        //get TextView
+        TextView textView = view.findViewById(R.id.course);
 
         //set id
         textInputLayout.setId(R.id.gpa_text_input_layout + counter);
         editText.setId(R.id.editFinalGrade + counter);
+        textView.setId(R.id.course + counter);
         spinner.setId(R.id.spinnerCredits + counter);
+        spinner.setSelection(2);
 
         //add it into my view
         parentLayout.addView(view);
@@ -110,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     textInputLayout.setError(null);
                 }
             } catch (Exception e) {
-
+                Log.e(getPackageName(), "Exception: "+Log.getStackTraceString(e));
             }
         }
 
@@ -144,12 +150,18 @@ public class MainActivity extends AppCompatActivity {
                 howManyCredits += credits;
 
             } catch (Exception e) {
-
+                Log.e(getPackageName(), "Exception: "+Log.getStackTraceString(e));
             }
         }
 
         double gpa = total / howManyCredits;
         GPAResults.setText(String.format(Locale.getDefault(), "%.2f", gpa));
+        if (gpa <= 60)
+            GPAResults.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.redBackground));
+        else if (gpa < 80)
+            GPAResults.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.yellowBackground));
+        else
+            GPAResults.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.greenBackground));
     }
 
     public void clearForm() {
@@ -160,9 +172,9 @@ public class MainActivity extends AppCompatActivity {
                 Spinner spinner = findViewById(R.id.spinnerCredits + x);
 
                 editText.getText().clear();
-                spinner.setSelection(0);
+                spinner.setSelection(2);
             } catch (Exception e) {
-
+                Log.e(getPackageName(), "Exception: "+Log.getStackTraceString(e));
             }
         }
     }
