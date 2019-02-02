@@ -39,6 +39,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/linearLayout" />
 
+        <TextView
+            android:id="@+id/GPAResults"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/result_size"
+            app:layout_constraintStart_toEndOf="@id/addCourseBtn"
+            app:layout_constraintEnd_toStartOf="@id/CalculateGPABtn"
+            app:layout_constraintTop_toBottomOf="@id/linearLayout" />
+
         <Button
             android:id="@+id/CalculateGPABtn"
             android:layout_width="wrap_content"

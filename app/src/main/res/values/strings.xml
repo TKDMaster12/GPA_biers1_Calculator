@@ -2,7 +2,15 @@
     <string name="app_name">GPA Calculator</string>
     <string name="title">GPA Calculator</string>
     <string name="courseNumber">Course</string>
-    <string name="addCourse">Add Course</string>
-    <string name="EnterGPA">Enter GPA</string>
+    <string name="addCourse">Add Another Course</string>
+    <string name="EnterFinalGrade">Enter Final Grade</string>
     <string name="calculateGPA">Compute GPA</string>
+    <string name="clearForm">Clear Form</string>
+
+    <string-array name="credits_dropdown_arrays">
+        <item>1 Credit</item>
+        <item>2 Credits</item>
+        <item>3 Credits</item>
+        <item>4 Credits</item>
+    </string-array>
 </resources>
