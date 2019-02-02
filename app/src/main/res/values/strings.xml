@@ -6,6 +6,7 @@
     <string name="EnterFinalGrade">Enter Final Grade</string>
     <string name="calculateGPA">Compute GPA</string>
     <string name="clearForm">Clear Form</string>
+    <string name="deleteButton">Delete Button</string>
 
     <string-array name="credits_dropdown_arrays">
         <item>1 Credit</item>

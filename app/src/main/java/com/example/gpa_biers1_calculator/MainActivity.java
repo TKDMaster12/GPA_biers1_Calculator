@@ -1,5 +1,6 @@
 package com.example.gpa_biers1_calculator;
 
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -19,8 +20,10 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
 
     ViewGroup parentLayout;
+    ScrollView mainLayout;
     int counter = 5000;
     Button calculateGPABtn;
+    Button addCourseBtn;
     TextView GPAResults;
 
     @Override
@@ -29,9 +32,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //initialize
-        Button addCourseBtn = findViewById(R.id.addCourseBtn);
+        addCourseBtn = findViewById(R.id.addCourseBtn);
         calculateGPABtn = findViewById(R.id.CalculateGPABtn);
         parentLayout = findViewById(R.id.linearLayout);
+        mainLayout = findViewById(R.id.MainLayout);
         GPAResults = findViewById(R.id.GPAResults);
 
         //when click on button add textView
@@ -69,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         //get TextInputLayout
         TextInputLayout textInputLayout = view.findViewById(R.id.gpa_text_input_layout);
         //get editText
-        EditText editText = view.findViewById(R.id.editFinalGrade);
+        TextInputEditText textInputEditText = view.findViewById(R.id.editFinalGrade);
         //get spinner
         Spinner spinner = view.findViewById(R.id.spinnerCredits);
         //get TextView
@@ -77,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
         //set id
         textInputLayout.setId(R.id.gpa_text_input_layout + counter);
-        editText.setId(R.id.editFinalGrade + counter);
+        textInputEditText.setId(R.id.editFinalGrade + counter);
         textView.setId(R.id.course + counter);
         spinner.setId(R.id.spinnerCredits + counter);
         spinner.setSelection(2);
@@ -101,10 +105,10 @@ public class MainActivity extends AppCompatActivity {
 
         for (int x = 5000; x < counter; x++) {
             try {
-                EditText editText = findViewById(R.id.editFinalGrade + x);
+                TextInputEditText textInputEditText = findViewById(R.id.editFinalGrade + x);
                 TextInputLayout textInputLayout = findViewById(R.id.gpa_text_input_layout + x);
 
-                String gradeValidator = editText.getText().toString();
+                String gradeValidator = textInputEditText.getText().toString();
 
                 if (TextUtils.isEmpty(gradeValidator)) {
                     textInputLayout.setError("Please enter a grade");
@@ -113,16 +117,23 @@ public class MainActivity extends AppCompatActivity {
                     textInputLayout.setError("Please enter a number");
                     error++;
                 } else {
-                    textInputLayout.setError(null);
+                    int grade = Integer.parseInt(gradeValidator);
+                    if (grade < 0 || grade > 100) {
+                        textInputLayout.setError("A Number 0 to 100");
+                        error++;
+                    } else {
+                        textInputLayout.setError(null);
+                    }
                 }
             } catch (Exception e) {
-                Log.e(getPackageName(), "Exception: "+Log.getStackTraceString(e));
+                Log.e(getPackageName(), "Exception: " + Log.getStackTraceString(e));
             }
         }
 
         if (error == 0) {
             calculateGPA();
             calculateGPABtn.setText(getResources().getString(R.string.clearForm));
+            addCourseBtn.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -137,49 +148,53 @@ public class MainActivity extends AppCompatActivity {
 
         for (int x = 5000; x < counter; x++) {
             try {
-                EditText editText = findViewById(R.id.editFinalGrade + x);
+                TextInputEditText textInputEditText = findViewById(R.id.editFinalGrade + x);
                 Spinner spinner = findViewById(R.id.spinnerCredits + x);
 
-                int grade = Integer.parseInt(editText.getText().toString());
-                double finalgrade = convertGradetoGPA(grade);
-
+                int grade = Integer.parseInt(textInputEditText.getText().toString());
                 char c = spinner.getSelectedItem().toString().charAt(0);
                 int credits = (int) c;
 
-                total += finalgrade * credits;
+                total += grade * credits;
                 howManyCredits += credits;
 
             } catch (Exception e) {
-                Log.e(getPackageName(), "Exception: "+Log.getStackTraceString(e));
+                Log.e(getPackageName(), "Exception: " + Log.getStackTraceString(e));
             }
         }
 
         double gpa = total / howManyCredits;
-        GPAResults.setText(String.format(Locale.getDefault(), "%.2f", gpa));
+        double finalGPA = convertGradetoGPA(gpa);
+        String answer = "GPA: " + String.format(Locale.getDefault(), "%.2f", finalGPA);
+
+        GPAResults.setText(answer);
+
         if (gpa <= 60)
-            GPAResults.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.redBackground));
+            mainLayout.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.redBackground));
         else if (gpa < 80)
-            GPAResults.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.yellowBackground));
+            mainLayout.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.yellowBackground));
         else
-            GPAResults.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.greenBackground));
+            mainLayout.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.greenBackground));
     }
 
     public void clearForm() {
         GPAResults.setText(null);
         for (int x = 5000; x < counter; x++) {
             try {
-                EditText editText = findViewById(R.id.editFinalGrade + x);
+                TextInputEditText textInputEditText = findViewById(R.id.editFinalGrade + x);
                 Spinner spinner = findViewById(R.id.spinnerCredits + x);
 
-                editText.getText().clear();
+                textInputEditText.getText().clear();
                 spinner.setSelection(2);
             } catch (Exception e) {
-                Log.e(getPackageName(), "Exception: "+Log.getStackTraceString(e));
+                Log.e(getPackageName(), "Exception: " + Log.getStackTraceString(e));
             }
         }
+        mainLayout.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), android.R.color.transparent));
+        addCourseBtn.setVisibility(View.VISIBLE);
     }
 
-    public double convertGradetoGPA(int grade) {
+    public double convertGradetoGPA(double grade) {
         //A
         if (grade > 94)
             return 4.0;

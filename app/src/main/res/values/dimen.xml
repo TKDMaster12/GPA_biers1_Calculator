@@ -3,5 +3,6 @@
     <dimen name="title_size">30sp</dimen>
     <dimen name="course_size">20sp</dimen>
     <dimen name="result_size">20sp</dimen>
+    <dimen name="editText_size">16sp</dimen>
     <dimen name="spacing">10dp</dimen>
 </resources>
