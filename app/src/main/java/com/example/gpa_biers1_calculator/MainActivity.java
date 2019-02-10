@@ -5,7 +5,9 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -61,9 +63,50 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //add five textViews and editTexts
-        for (int i = 0; i < 5; i++)
-            addEditTextView();
+        if (savedInstanceState == null) {
+            //add five textViews and editTexts
+            for (int i = 0; i < 5; i++)
+                addEditTextView();
+        } else {
+            int AmountTextEditValue = savedInstanceState.getInt("AmountTextEditValue");
+
+            for (int i = 5000; i < AmountTextEditValue; i++)
+                addEditTextView();
+
+            for (int x = 5000; x < counter; x++) {
+                try {
+                    TextInputEditText textInputEditText = findViewById(R.id.editFinalGrade + x);
+                    Spinner spinner = findViewById(R.id.spinnerCredits  + x);
+
+                    textInputEditText.setText(savedInstanceState.getString("TextEditValue" + x));
+                    spinner.setSelection(savedInstanceState.getInt("SpinnerValue" + x));
+                } catch (Exception e) {
+                    Log.e(getPackageName(), "Exception: " + Log.getStackTraceString(e));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        int y = 5000;
+        for (int x = 5000; x < counter; x++) {
+            try {
+                TextInputEditText textInputEditText = findViewById(R.id.editFinalGrade + x);
+                Spinner spinner = findViewById(R.id.spinnerCredits  + x);
+
+                savedInstanceState.putInt("SpinnerValue" + y, spinner.getSelectedItemPosition());
+                savedInstanceState.putString("TextEditValue" + y, textInputEditText.getText().toString());
+                y++;
+            } catch (Exception e) {
+                Log.e(getPackageName(), "Exception: " + Log.getStackTraceString(e));
+            }
+        }
+        savedInstanceState.putInt("AmountTextEditValue", y);
     }
 
     protected void addEditTextView() {
@@ -71,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         View view = LayoutInflater.from(this).inflate(R.layout.course_item, null);
 
         //get TextInputLayout
-        TextInputLayout textInputLayout = view.findViewById(R.id.gpa_text_input_layout);
+        final TextInputLayout textInputLayout = view.findViewById(R.id.gpa_text_input_layout);
         //get editText
         TextInputEditText textInputEditText = view.findViewById(R.id.editFinalGrade);
         //get spinner
@@ -85,6 +128,40 @@ public class MainActivity extends AppCompatActivity {
         textView.setId(R.id.course + counter);
         spinner.setId(R.id.spinnerCredits + counter);
         spinner.setSelection(2);
+
+        //add TextWatcher
+        textInputEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                addCourseBtn.setVisibility(View.VISIBLE);
+                calculateGPABtn.setText(getResources().getString(R.string.calculateGPA));
+
+                String gradeValidator = s.toString();
+
+                if (TextUtils.isEmpty(gradeValidator)) {
+                    textInputLayout.setError("Please enter a grade");
+                } else if (!isNumeric(gradeValidator)) {
+                    textInputLayout.setError("Please enter a number");
+                } else {
+                    int grade = Integer.parseInt(gradeValidator);
+                    if (grade < 0 || grade > 100) {
+                        textInputLayout.setError("A Number 0 to 100");
+                    } else {
+                        textInputLayout.setError(null);
+                    }
+                }
+            }
+        });
 
         //add it into my view
         parentLayout.addView(view);
@@ -182,9 +259,11 @@ public class MainActivity extends AppCompatActivity {
         for (int x = 5000; x < counter; x++) {
             try {
                 TextInputEditText textInputEditText = findViewById(R.id.editFinalGrade + x);
+                TextInputLayout textInputLayout = findViewById(R.id.gpa_text_input_layout + x);
                 Spinner spinner = findViewById(R.id.spinnerCredits + x);
 
                 textInputEditText.getText().clear();
+                textInputLayout.setError(null);
                 spinner.setSelection(2);
             } catch (Exception e) {
                 Log.e(getPackageName(), "Exception: " + Log.getStackTraceString(e));
