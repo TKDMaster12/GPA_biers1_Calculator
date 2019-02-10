@@ -32,12 +32,12 @@
 
         <android.support.design.widget.TextInputEditText
             android:id="@+id/editFinalGrade"
-            android:imeOptions="flagNoExtractUi"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:autofillHints="@string/EnterFinalGrade"
             android:hint="@string/EnterFinalGrade"
-            android:inputType="number"
+            android:imeOptions="flagNoExtractUi"
+            android:inputType="numberDecimal"
             android:labelFor="@id/course"
             android:textSize="@dimen/editText_size" />
     </android.support.design.widget.TextInputLayout>

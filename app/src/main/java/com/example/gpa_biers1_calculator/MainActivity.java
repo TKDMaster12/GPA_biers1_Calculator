@@ -147,14 +147,14 @@ public class MainActivity extends AppCompatActivity {
                 calculateGPABtn.setText(getResources().getString(R.string.calculateGPA));
 
                 String gradeValidator = s.toString();
+                double isNumberResult = isNumeric(gradeValidator);
 
                 if (TextUtils.isEmpty(gradeValidator)) {
                     textInputLayout.setError("Please enter a grade");
-                } else if (!isNumeric(gradeValidator)) {
+                } else if (isNumberResult == -1) {
                     textInputLayout.setError("Please enter a number");
                 } else {
-                    int grade = Integer.parseInt(gradeValidator);
-                    if (grade < 0 || grade > 100) {
+                    if (isNumberResult < 0 || isNumberResult > 100) {
                         textInputLayout.setError("A Number 0 to 100");
                     } else {
                         textInputLayout.setError(null);
@@ -168,13 +168,12 @@ public class MainActivity extends AppCompatActivity {
         counter++;
     }
 
-    public static boolean isNumeric(String strNum) {
+    public static double isNumeric(String strNum) {
         try {
-            double d = Double.parseDouble(strNum);
+            return Double.parseDouble(strNum);
         } catch (NumberFormatException | NullPointerException nfe) {
-            return false;
+            return -1;
         }
-        return true;
     }
 
     public void validate() {
@@ -186,16 +185,16 @@ public class MainActivity extends AppCompatActivity {
                 TextInputLayout textInputLayout = findViewById(R.id.gpa_text_input_layout + x);
 
                 String gradeValidator = textInputEditText.getText().toString();
+                double isNumberResult = isNumeric(gradeValidator);
 
                 if (TextUtils.isEmpty(gradeValidator)) {
                     textInputLayout.setError("Please enter a grade");
                     error++;
-                } else if (!isNumeric(gradeValidator)) {
+                } else if (isNumberResult == -1) {
                     textInputLayout.setError("Please enter a number");
                     error++;
                 } else {
-                    int grade = Integer.parseInt(gradeValidator);
-                    if (grade < 0 || grade > 100) {
+                    if (isNumberResult < 0 || isNumberResult > 100) {
                         textInputLayout.setError("A Number 0 to 100");
                         error++;
                     } else {
@@ -220,7 +219,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void calculateGPA() {
 
-        double total = 0;
+        double totalGPA = 0;
+        double totalScore = 0;
         int howManyCredits = 0;
 
         for (int x = 5000; x < counter; x++) {
@@ -228,11 +228,14 @@ public class MainActivity extends AppCompatActivity {
                 TextInputEditText textInputEditText = findViewById(R.id.editFinalGrade + x);
                 Spinner spinner = findViewById(R.id.spinnerCredits + x);
 
-                int grade = Integer.parseInt(textInputEditText.getText().toString());
+                double grade = Double.parseDouble(textInputEditText.getText().toString());
+                double gpa = convertGradetoGPA(grade);
+
                 char c = spinner.getSelectedItem().toString().charAt(0);
                 int credits = (int) c;
 
-                total += grade * credits;
+                totalGPA += gpa * credits;
+                totalScore += grade * credits;
                 howManyCredits += credits;
 
             } catch (Exception e) {
@@ -240,21 +243,22 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        double gpa = total / howManyCredits;
-        double finalGPA = convertGradetoGPA(gpa);
+        double finalGPA = totalGPA / howManyCredits;
+        double finalScore = totalScore / howManyCredits;
         String answer = "GPA: " + String.format(Locale.getDefault(), "%.2f", finalGPA);
 
         GPAResults.setText(answer);
 
-        if (gpa <= 60)
+        if (finalScore <= 60)
             mainLayout.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.redBackground));
-        else if (gpa < 80)
+        else if (finalScore < 80)
             mainLayout.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.yellowBackground));
         else
             mainLayout.setBackgroundColor(ContextCompat.getColor(this.getApplicationContext(), R.color.greenBackground));
     }
 
     public void clearForm() {
+        boolean first = true;
         GPAResults.setText(null);
         for (int x = 5000; x < counter; x++) {
             try {
@@ -265,6 +269,10 @@ public class MainActivity extends AppCompatActivity {
                 textInputEditText.getText().clear();
                 textInputLayout.setError(null);
                 spinner.setSelection(2);
+                if(first) {
+                    textInputEditText.requestFocus();
+                    first = false;
+                }
             } catch (Exception e) {
                 Log.e(getPackageName(), "Exception: " + Log.getStackTraceString(e));
             }
